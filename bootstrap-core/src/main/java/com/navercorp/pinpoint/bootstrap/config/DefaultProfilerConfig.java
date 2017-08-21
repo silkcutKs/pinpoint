@@ -145,7 +145,9 @@ public class DefaultProfilerConfig implements ProfilerConfig {
 
     // span buffering
     private boolean ioBufferingEnable;
-    private int ioBufferingBufferSize;
+
+    // chuanyun default buffer size
+    private int ioBufferingBufferSize = 20;
 
     private String profileJvmVendorName;
     private int profileJvmStatCollectIntervalMs = DEFAULT_AGENT_STAT_COLLECTION_INTERVAL_MS;

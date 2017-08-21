@@ -22,11 +22,7 @@ import com.navercorp.pinpoint.bootstrap.config.ProfilerConfig;
 import com.navercorp.pinpoint.profiler.context.SpanChunkFactory;
 import com.navercorp.pinpoint.profiler.context.SpanPostProcessor;
 import com.navercorp.pinpoint.profiler.context.module.SpanDataSender;
-import com.navercorp.pinpoint.profiler.context.storage.BufferedStorageFactory;
-import com.navercorp.pinpoint.profiler.context.storage.SpanStorageFactory;
-import com.navercorp.pinpoint.profiler.context.storage.StorageFactory;
-import com.navercorp.pinpoint.profiler.context.storage.TraceLogDelegateStorage;
-import com.navercorp.pinpoint.profiler.context.storage.TraceLogDelegateStorageFactory;
+import com.navercorp.pinpoint.profiler.context.storage.*;
 import com.navercorp.pinpoint.profiler.sender.DataSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,13 +64,14 @@ public class StorageFactoryProvider implements Provider<StorageFactory> {
         return storageFactory;
     }
 
+    /* chuanyun  change store factory for use  span only, no need to buffer */
     private StorageFactory newStorageFactory() {
-        if (profilerConfig.isIoBufferingEnable()) {
-            int ioBufferingBufferSize = this.profilerConfig.getIoBufferingBufferSize();
-            return new BufferedStorageFactory(ioBufferingBufferSize, this.spanDataSender, this.spanPostProcessor, this.spanChunkFactory);
-        } else {
-            return new SpanStorageFactory(spanDataSender);
-        }
+//        if (profilerConfig.isIoBufferingEnable()) {
+//        int ioBufferingBufferSize = this.profilerConfig.getIoBufferingBufferSize();
+//        return new BufferedStorageFactory(ioBufferingBufferSize, this.spanDataSender, this.spanPostProcessor, this.spanChunkFactory);
+//        } else {
+        return new SpanStorageFactory(spanDataSender);
+//        }
     }
 
     @Override

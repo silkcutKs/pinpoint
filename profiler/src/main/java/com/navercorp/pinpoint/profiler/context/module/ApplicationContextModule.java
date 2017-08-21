@@ -284,6 +284,11 @@ public class ApplicationContextModule extends AbstractModule {
                 .toProvider(UdpSpanDataSenderProvider.class).in(Scopes.SINGLETON);
         bind(DataSender.class).annotatedWith(StatDataSender.class)
                 .toProvider(UdpStatDataSenderProvider.class).in(Scopes.SINGLETON);
+
+        //chuanyun add kafka data sender, for us only one data output type is kafka,
+        // so above will all replace by kafka
+        // kafka span data sender
+
     }
 
     private void bindServiceComponent() {

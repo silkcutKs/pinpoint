@@ -65,24 +65,27 @@ public class BufferedStorage implements Storage {
         this.storage = allocateBuffer();
     }
 
+    /* current store to check send or not */
+    /* chuanyun  store span not to send,  but spans must in one request */
     @Override
     public void store(SpanEvent spanEvent) {
         final List<SpanEvent> storage = getBuffer();
         storage.add(spanEvent);
 
-        if (overflow(storage)) {
-            final List<SpanEvent> flushData = clearBuffer();
-            final SpanChunk spanChunk = spanChunkFactory.create(traceRoot, flushData);
-            if (isDebug) {
-                logger.debug("[BufferedStorage] Flush span-chunk {}", spanChunk);
-            }
-            dataSender.send(spanChunk);
-        }
+        /* sotre just store */
+//        if (overflow(storage)) {
+//            final List<SpanEvent> flushData = clearBuffer();
+//            final SpanChunk spanChunk = spanChunkFactory.create(traceRoot, flushData);
+//            if (isDebug) {
+//                logger.debug("[BufferedStorage] Flush span-chunk {}", spanChunk);
+//            }
+//            dataSender.send(spanChunk);
+//        }
     }
 
-    private boolean overflow(List<SpanEvent> storage) {
-        return storage.size() >= bufferSize;
-    }
+//    private boolean overflow(List<SpanEvent> storage) {
+//        return storage.size() >= bufferSize;
+//    }
 
 
     private List<SpanEvent> allocateBuffer() {
@@ -117,6 +120,7 @@ public class BufferedStorage implements Storage {
         }
     }
 
+    /* chuanyun  to flush span to send,  but spans must in one request */
     public void flush() {
         final List<SpanEvent> storage = clearBuffer();
         if (CollectionUtils.hasLength(storage)) {
@@ -128,8 +132,17 @@ public class BufferedStorage implements Storage {
         }
     }
 
+    /* only close to send data */
     @Override
     public void close() {
+        final List<SpanEvent> flushData = clearBuffer();
+        if (CollectionUtils.hasLength(storage)) {
+            final SpanChunk spanChunk = spanChunkFactory.create(traceRoot, flushData);
+            if (isDebug) {
+                logger.debug("[BufferedStorage] Flush span-chunk {}", spanChunk);
+            }
+            dataSender.send(spanChunk);
+        }
     }
 
     @Override
