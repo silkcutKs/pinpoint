@@ -52,10 +52,8 @@
         <module>bootstrap-core</module>
         <module>bootstrap-core-optional</module>
         <module>bootstrap</module>
-        <module>collector</module>
         <module>commons</module>
         <module>commons-hbase</module>
-        <module>commons-server</module>
         <module>tools</module>
         <module>plugins</module>
         <module>profiler</module>
@@ -119,11 +117,6 @@
             </dependency>
             <dependency>
                 <groupId>com.navercorp.pinpoint</groupId>
-                <artifactId>pinpoint-commons-server</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.navercorp.pinpoint</groupId>
                 <artifactId>pinpoint-commons-hbase</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -166,18 +159,6 @@
             <dependency>
                 <groupId>com.navercorp.pinpoint</groupId>
                 <artifactId>pinpoint-profiler-test</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.navercorp.pinpoint</groupId>
-                <artifactId>pinpoint-collector</artifactId>
-                <type>war</type>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.navercorp.pinpoint</groupId>
-                <artifactId>pinpoint-collector</artifactId>
-                <classifier>classes</classifier>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
