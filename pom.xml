@@ -53,7 +53,6 @@
         <module>bootstrap-core-optional</module>
         <module>bootstrap</module>
         <module>commons</module>
-        <module>commons-hbase</module>
         <module>tools</module>
         <module>plugins</module>
         <module>profiler</module>
@@ -62,7 +61,6 @@
         <module>rpc</module>
         <module>thrift</module>
         <module>test</module>
-        <module>hbase</module>
     </modules>
 
     <properties>
@@ -113,11 +111,6 @@
             <dependency>
                 <groupId>com.navercorp.pinpoint</groupId>
                 <artifactId>pinpoint-commons</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.navercorp.pinpoint</groupId>
-                <artifactId>pinpoint-commons-hbase</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
