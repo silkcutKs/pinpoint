@@ -64,9 +64,7 @@
         <module>rpc</module>
         <module>thrift</module>
         <module>test</module>
-        <module>web</module>
         <module>hbase</module>
-        <module>flink</module>
     </modules>
 
     <properties>
@@ -184,18 +182,6 @@
             </dependency>
             <dependency>
                 <groupId>com.navercorp.pinpoint</groupId>
-                <artifactId>pinpoint-web</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
-                <groupId>com.navercorp.pinpoint</groupId>
-                <artifactId>pinpoint-web</artifactId>
-                <classifier>classes</classifier>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.navercorp.pinpoint</groupId>
                 <artifactId>pinpoint-plugins</artifactId>
                 <type>pom</type>
                 <version>${project.version}</version>
@@ -216,12 +202,6 @@
                 <artifactId>pinpoint-test</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.navercorp.pinpoint</groupId>
-                <artifactId>pinpoint-flink</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
