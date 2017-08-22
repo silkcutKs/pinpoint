@@ -16,14 +16,12 @@
 
 package com.navercorp.pinpoint.plugin.thrift.common.client;
 
-import static com.navercorp.pinpoint.bootstrap.plugin.test.Expectations.*;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.InetSocketAddress;
-import java.nio.channels.SelectionKey;
-import java.util.concurrent.CountDownLatch;
-
+import com.navercorp.pinpoint.bootstrap.plugin.test.Expectations;
+import com.navercorp.pinpoint.bootstrap.plugin.test.ExpectedAnnotation;
+import com.navercorp.pinpoint.bootstrap.plugin.test.ExpectedTrace;
+import com.navercorp.pinpoint.bootstrap.plugin.test.PluginTestVerifier;
+import com.navercorp.pinpoint.plugin.thrift.common.TestEnvironment;
+import com.navercorp.pinpoint.plugin.thrift.dto.EchoService;
 import org.apache.thrift.TBase;
 import org.apache.thrift.TException;
 import org.apache.thrift.TServiceClient;
@@ -33,12 +31,14 @@ import org.apache.thrift.async.TAsyncMethodCall;
 import org.apache.thrift.transport.TNonblockingSocket;
 import org.apache.thrift.transport.TNonblockingTransport;
 
-import com.navercorp.pinpoint.bootstrap.plugin.test.Expectations;
-import com.navercorp.pinpoint.bootstrap.plugin.test.ExpectedAnnotation;
-import com.navercorp.pinpoint.bootstrap.plugin.test.ExpectedTrace;
-import com.navercorp.pinpoint.bootstrap.plugin.test.PluginTestVerifier;
-import com.navercorp.pinpoint.plugin.thrift.common.TestEnvironment;
-import com.navercorp.pinpoint.plugin.thrift.dto.EchoService;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import java.nio.channels.SelectionKey;
+import java.util.concurrent.CountDownLatch;
+
+import static com.navercorp.pinpoint.bootstrap.plugin.test.Expectations.async;
+import static com.navercorp.pinpoint.bootstrap.plugin.test.Expectations.event;
 
 /**
  * @author HyunGil Jeong
@@ -95,7 +95,7 @@ public class AsyncEchoTestClient implements EchoTestClient {
                 + expectedMessage + ")");
         ExpectedTrace receiveBaseTrace = event("THRIFT_CLIENT_INTERNAL", // ServiceType
                 receiveBase, // Method
-                thriftResult // Annotation("thrift.result")
+                thriftResult // annotation("thrift.result")
         );
 
         // ********** Root trace for Asynchronous traces
@@ -108,7 +108,7 @@ public class AsyncEchoTestClient implements EchoTestClient {
                 null, // rpc
                 null, // endPoint
                 actualServerAddress.getHostName() + ":" + actualServerAddress.getPort(), // destinationId
-                thriftUrl // Annotation("thrift.url")
+                thriftUrl // annotation("thrift.url")
         );
         verifier.verifyTrace(async(callTrace, asyncInvocationTrace, cleanUpAndFireCallbackTrace, receiveBaseTrace));
     }

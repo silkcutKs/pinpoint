@@ -105,7 +105,7 @@ public class WrappedSpanEventRecorder extends AbstractRecorder implements SpanEv
 
 
     private void recordSqlParam(TIntStringStringValue tIntStringStringValue) {
-        spanEvent.addAnnotation(new Annotation(AnnotationKey.SQL_ID.getCode(), tIntStringStringValue));
+        spanEvent.addAnnotation(new Annotation(AnnotationKey.SQL_ID.getCode(), AnnotationKey.SQL_ID.getName(), tIntStringStringValue));
     }
 
     @Override
@@ -191,7 +191,7 @@ public class WrappedSpanEventRecorder extends AbstractRecorder implements SpanEv
 
     @Override
     public void recordServiceType(ServiceType serviceType) {
-        spanEvent.setServiceType(serviceType.getCode());
+        spanEvent.setServiceType(serviceType);
     }
 
     @Override

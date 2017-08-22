@@ -19,8 +19,8 @@ package com.navercorp.pinpoint.profiler.context.storage;
 import com.navercorp.pinpoint.profiler.context.Span;
 import com.navercorp.pinpoint.profiler.context.SpanEvent;
 import com.navercorp.pinpoint.profiler.context.id.TraceRoot;
+import com.navercorp.pinpoint.profiler.context.transform.SSpan;
 import com.navercorp.pinpoint.profiler.sender.DataSender;
-import com.navercorp.pinpoint.thrift.dto.TSpanEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,9 @@ import java.util.List;
  */
 public class SpanStorage implements Storage {
 
-    protected List<TSpanEvent> spanEventList = new ArrayList<TSpanEvent>(10);
+    protected List<SpanEvent> spanEventList = new ArrayList<SpanEvent>(10);
+    private List<SSpan> sSpans = new ArrayList<SSpan>(10);
+
     private final TraceRoot traceRoot;
     private final DataSender dataSender;
 
@@ -45,17 +47,44 @@ public class SpanStorage implements Storage {
         this.dataSender = dataSender;
     }
 
+    /* chuanyun change thrift to json, the format is zipkin */
+    private void transformt2J(Span span) {
+//        String endPoint = span.getEndPoint();
+//        String traceId = this.traceRoot.getTraceId().getTransactionId();
+//        List<SSpan> sspans = new ArrayList<SSpan>();
+
+        /* change parent span to root span */
+
+        /* span id is parent span id , next id is span id */
+        /* change spanEvent to child span */
+        /* add SAnnotations as ba */
+    }
+
+    // transform span event to sspan
+    private  void transformE2S(SpanEvent spanEvent){
+        String traceId = this.traceRoot.getTraceId().getTransactionId();
+        String parentId = String.valueOf(spanEvent.getSpanId());
+        String spanId = String.valueOf(spanEvent.getNextSpanId());
+        String name = spanEvent.getServiceType().getName();
+        SSpan sSpan = new SSpan(traceId, parentId, spanId, name, spanEvent.getStartElapsed() * 1000, 1000 * (spanEvent.getEndElapsed() - spanEvent.getStartElapsed()));
+        sSpan.setBinaryAnnotations(spanEvent.getBinaryAnnotations());
+        sSpan.setSAnnotations(spanEvent.getsAnnotations());
+        this.sSpans.add(sSpan);
+    }
+
     @Override
     public void store(SpanEvent spanEvent) {
         if (spanEvent == null) {
             throw new NullPointerException("spanEvent must not be null");
         }
-        final List<TSpanEvent> spanEventList = this.spanEventList;
-        if (spanEventList != null) {
-            spanEventList.add(spanEvent);
-        } else {
-            throw new IllegalStateException("spanEventList is null");
-        }
+        this.transformE2S(spanEvent);
+
+//        final List<SpanEvent> spanEventList = this.spanEventList;
+//        if (spanEventList != null) {
+//            spanEventList.add(spanEvent);
+//        } else {
+//            throw new IllegalStateException("spanEventList is null");
+//        }
     }
 
     @Override
@@ -63,8 +92,7 @@ public class SpanStorage implements Storage {
         if (span == null) {
             throw new NullPointerException("span must not be null");
         }
-        span.setSpanEventList(spanEventList);
-        spanEventList = null;
+        span.setsSpans(this.sSpans);
         this.dataSender.send(span);
     }
 

@@ -63,7 +63,7 @@ public class SpanEventCompressorV2 implements SpanEventCompressor<Long> {
 
 
     /**
-     * Skip depth to Span or SpanChunk scope
+     * Skip depth to SSpan or SpanChunk scope
      * @param spanEventList
      */
     private void compressDepth(List<SpanEvent> spanEventList) {

@@ -15,18 +15,18 @@
  */
 package com.navercorp.pinpoint.profiler.context.recorder;
 
+import com.navercorp.pinpoint.bootstrap.context.SpanRecorder;
+import com.navercorp.pinpoint.common.trace.LoggingInfo;
+import com.navercorp.pinpoint.common.trace.ServiceType;
 import com.navercorp.pinpoint.profiler.context.Annotation;
 import com.navercorp.pinpoint.profiler.context.DefaultTrace;
 import com.navercorp.pinpoint.profiler.context.Span;
 import com.navercorp.pinpoint.profiler.context.id.TraceRoot;
+import com.navercorp.pinpoint.profiler.context.transform.EndPoint;
 import com.navercorp.pinpoint.profiler.metadata.SqlMetaDataService;
 import com.navercorp.pinpoint.profiler.metadata.StringMetaDataService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.navercorp.pinpoint.bootstrap.context.SpanRecorder;
-import com.navercorp.pinpoint.common.trace.LoggingInfo;
-import com.navercorp.pinpoint.common.trace.ServiceType;
 
 /**
  * 
@@ -96,10 +96,29 @@ public class DefaultSpanRecorder extends AbstractRecorder implements SpanRecorde
         span.setRemoteAddr(remoteAddress);
     }
 
+    /* here endpoint is always host:port, we can parse it */
+    private EndPoint parseHostAndPort(String endPoint) {
+        String[] after = endPoint.split(":");
+        String ip;
+        int port;
+        if (after.length >= 2) {
+            ip = after[0];
+            port = Integer.parseInt(after[1]);
+        } else {
+            ip = after[0];
+            port = 80;
+        }
+        return new EndPoint(span.getTraceRoot().getServiceName(), ip, port);
+    }
+
+    /* chuanyun */
     @Override
     public void recordEndPoint(String endPoint) {
         span.setEndPoint(endPoint);
         span.getTraceRoot().getShared().setEndPoint(endPoint);
+
+        /* add common endpoint */
+        span.setCommonEndPoint(this.parseHostAndPort(endPoint));
     }
 
     @Override

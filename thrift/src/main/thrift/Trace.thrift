@@ -42,9 +42,9 @@ struct TSpanEvent {
     7: optional i64 spanId
     8: i16 sequence
 
-    // 1.6.x- : delta of the span startTime
+    // 1.6.x- : delta of the SSpan startTime
     // 1.7.0+: delta of startTime of previous SpanEvent
-    //         If SpanEvent is the first SpanEvent, startElapsed is span startTime
+    //         If SpanEvent is the first SpanEvent, startElapsed is SSpan startTime
     9: i32 startElapsed = 0;
 
     10: optional i32 endElapsed = 0
@@ -83,7 +83,7 @@ struct TSpan {
     7: i64 spanId
     8: optional i64 parentSpanId = -1
 
-    // span event's startTimestamp
+    // SSpan event's startTimestamp
     9: i64 startTime
     10: optional i32 elapsed = 0
 

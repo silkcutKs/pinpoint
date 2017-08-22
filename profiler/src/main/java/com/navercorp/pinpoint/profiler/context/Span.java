@@ -19,14 +19,18 @@ package com.navercorp.pinpoint.profiler.context;
 import com.navercorp.pinpoint.bootstrap.context.FrameAttachment;
 import com.navercorp.pinpoint.bootstrap.context.SpanId;
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
+import com.navercorp.pinpoint.common.util.StringUtils;
 import com.navercorp.pinpoint.profiler.context.id.Shared;
 import com.navercorp.pinpoint.profiler.context.id.TraceRoot;
-import com.navercorp.pinpoint.common.util.StringUtils;
+import com.navercorp.pinpoint.profiler.context.transform.EndPoint;
+import com.navercorp.pinpoint.profiler.context.transform.SSpan;
 import com.navercorp.pinpoint.thrift.dto.TIntStringValue;
 import com.navercorp.pinpoint.thrift.dto.TSpan;
 
+import java.util.List;
+
 /**
- * Span represent RPC
+ * SSpan represent RPC
  *
  * @author netspider
  * @author emeroad
@@ -36,6 +40,12 @@ public class Span extends TSpan implements FrameAttachment {
     private Object frameObject;
 
     private final TraceRoot traceRoot;
+
+    private EndPoint commonEndPoint;
+
+    private List<SSpan> sSpans;
+
+    private SSpan rootSpan;
 
     public Span(final TraceRoot traceRoot) {
         if (traceRoot == null) {
@@ -50,7 +60,22 @@ public class Span extends TSpan implements FrameAttachment {
             this.setParentSpanId(parentSpanId);
         }
         this.setFlag(traceId.getFlags());
+
+        /* chuanyun add */
+        this.rootSpan = new SSpan(traceRoot.getTraceId().getTransactionId(), String.valueOf(parentSpanId), String.valueOf(this.getSpanId()), traceRoot.getServiceName());
     }
+
+    public void setsSpans(List<SSpan> sSpans) {this.sSpans = sSpans;}
+
+    public List<SSpan> getsSpans() {return this.sSpans;}
+
+    /* chuanyun */
+    public void setCommonEndPoint(EndPoint endPoint) {
+        this.commonEndPoint = endPoint;
+        this.traceRoot.setEndPoint(endPoint);
+    }
+
+    public EndPoint getCommonEndPoint() {return this.commonEndPoint;}
 
     public TraceRoot getTraceRoot() {
         return traceRoot;

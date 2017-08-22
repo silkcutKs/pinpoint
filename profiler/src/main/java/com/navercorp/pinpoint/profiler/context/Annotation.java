@@ -28,12 +28,22 @@ import com.navercorp.pinpoint.thrift.dto.TIntStringValue;
  */
 public class Annotation extends TAnnotation {
 
+    /* chuanyun */
+    private String desc;
+
     public Annotation(int key) {
         super(key);
     }
 
     public Annotation(int key, Object value) {
         super(key);
+        AnnotationValueMapper.mappingValue(this, value);
+    }
+
+    /* chuanyun */
+    public Annotation(int key, String desc, Object value) {
+        super(key);
+        this.desc = desc;
         AnnotationValueMapper.mappingValue(this, value);
     }
 
@@ -47,16 +57,37 @@ public class Annotation extends TAnnotation {
         this.setValue(TAnnotationValue.intStringStringValue(value));
     }
 
+    /* chuanyun */
+    public Annotation(int key, String desc, TIntStringStringValue value) {
+        super(key);
+        this.desc = desc;
+        this.setValue(TAnnotationValue.intStringStringValue(value));
+    }
+
+    /* chuanyun */
+    public Annotation(int key, String desc, String value) {
+        super(key);
+        this.desc = desc;
+        this.setValue(TAnnotationValue.stringValue(value));
+    }
+
     public Annotation(int key, String value) {
         super(key);
         this.setValue(TAnnotationValue.stringValue(value));
+    }
+
+    /* chuanyun */
+    public Annotation(int key, String desc, int value) {
+        super(key);
+        this.desc = desc;
+        this.setValue(TAnnotationValue.intValue(value));
     }
 
     public Annotation(int key, int value) {
         super(key);
         this.setValue(TAnnotationValue.intValue(value));
     }
-
+    public String getDesc() { return this.desc;}
     public int getAnnotationKey() {
         return this.getKey();
     }

@@ -16,31 +16,22 @@
 
 package com.navercorp.pinpoint.profiler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import com.navercorp.pinpoint.profiler.context.provider.JvmInformationProvider;
-import com.navercorp.pinpoint.thrift.dto.TJvmGcType;
-import com.navercorp.pinpoint.thrift.dto.TJvmInfo;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.navercorp.pinpoint.bootstrap.context.ServerMetaData;
 import com.navercorp.pinpoint.bootstrap.context.ServerMetaDataHolder.ServerMetaDataListener;
 import com.navercorp.pinpoint.bootstrap.context.ServiceInfo;
 import com.navercorp.pinpoint.common.Version;
 import com.navercorp.pinpoint.common.util.PinpointThreadFactory;
+import com.navercorp.pinpoint.profiler.context.provider.JvmInformationProvider;
 import com.navercorp.pinpoint.profiler.sender.EnhancedDataSender;
-import com.navercorp.pinpoint.thrift.dto.TAgentInfo;
-import com.navercorp.pinpoint.thrift.dto.TServerMetaData;
-import com.navercorp.pinpoint.thrift.dto.TServiceInfo;
+import com.navercorp.pinpoint.thrift.dto.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author emeroad
@@ -198,7 +189,9 @@ public class AgentInfoSender implements ServerMetaDataListener {
         public void run() {
             if (!isSuccessful.get()) {
                 LOGGER.info("Sending AgentInfo {}", agentInfo);
-                dataSender.request(this.agentInfo, this.agentInfoSenderListener);
+
+                /* chuanyun disable anget info request */
+//                dataSender.request(this.agentInfo, this.agentInfoSenderListener);
             }
         }
 

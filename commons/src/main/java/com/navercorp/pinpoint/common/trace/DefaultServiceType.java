@@ -16,12 +16,18 @@
 
 package com.navercorp.pinpoint.common.trace;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author emeroad
  * @author netspider
  * @author Jongho Moon
  */
 class DefaultServiceType implements ServiceType {
+
+    private static final Map<Integer, String> code2Name = new HashMap<Integer, String>();
+
     private final short code;
     private final String name;
     private final String desc;
@@ -53,7 +59,7 @@ class DefaultServiceType implements ServiceType {
         boolean queue = false;
         boolean recordStatistics = false;
         boolean includeDestinationId = false;
-        
+
         for (ServiceTypeProperty property : properties) {
             switch (property) {
             case TERMINAL:
@@ -63,11 +69,11 @@ class DefaultServiceType implements ServiceType {
             case QUEUE:
                 queue = true;
                 break;
-                
+
             case RECORD_STATISTICS:
                 recordStatistics = true;
                 break;
-                
+
             case INCLUDE_DESTINATION_ID:
                 includeDestinationId = true;
                 break;
@@ -75,13 +81,18 @@ class DefaultServiceType implements ServiceType {
                 throw new IllegalStateException("Unknown ServiceTypeProperty:" + property);
             }
         }
-        
+
         this.terminal = terminal;
         this.queue = queue;
         this.recordStatistics = recordStatistics;
         this.includeDestinationId = includeDestinationId;
+
+        code2Name.put(code, name);
     }
 
+    public static String getNameByCode(short code) {
+        return code2Name.get(code);
+    }
 
     @Override
     public boolean isInternalMethod() {

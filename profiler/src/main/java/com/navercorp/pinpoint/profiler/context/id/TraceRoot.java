@@ -17,6 +17,7 @@
 package com.navercorp.pinpoint.profiler.context.id;
 
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
+import com.navercorp.pinpoint.profiler.context.transform.EndPoint;
 
 /**
  * @author Woonduk Kang(emeroad)
@@ -28,6 +29,13 @@ public interface TraceRoot {
     long getLocalTransactionId();
 
     long getTraceStartTime();
+
+    /* service name */
+    String getServiceName();
+
+    EndPoint getEndPoint();
+
+    void setEndPoint(EndPoint endPoint);
 
     Shared getShared();
 

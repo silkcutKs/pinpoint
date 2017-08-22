@@ -411,9 +411,10 @@ public class TSpanEvent implements org.apache.thrift.TBase<TSpanEvent, TSpanEven
     }
   }
 
-  public short getServiceType() {
-    return this.serviceType;
-  }
+  // chuanyun
+//  public short getServiceType() {
+//    return this.serviceType;
+//  }
 
   public void setServiceType(short serviceType) {
     this.serviceType = serviceType;
@@ -823,7 +824,7 @@ public class TSpanEvent implements org.apache.thrift.TBase<TSpanEvent, TSpanEven
       return getRpc();
 
     case SERVICE_TYPE:
-      return getServiceType();
+//      return getServiceType(); //chuanyun
 
     case END_POINT:
       return getEndPoint();

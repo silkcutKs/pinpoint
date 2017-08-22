@@ -97,7 +97,7 @@ public final class DefaultTrace implements Trace, TraceRootSupport {
             final SpanEvent dummy = newSpanEvent(stackId);
             return wrappedSpanEventRecorder(this.wrappedSpanEventRecorder, dummy);
         }
-        // Set properties for the case when stackFrame is not used as part of Span.
+        // Set properties for the case when stackFrame is not used as part of SSpan.
         final SpanEvent spanEvent = newSpanEvent(stackId);
         this.callStack.push(spanEvent);
         return wrappedSpanEventRecorder(this.wrappedSpanEventRecorder, spanEvent);

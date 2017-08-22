@@ -125,17 +125,18 @@ public abstract class AbstractRecorder {
          // TODO How to handle if args length is greater than MAX_ARGS_SIZE?                                                                  
         }
     }
-    
+
+    /* chuanyun for change */
     public void recordAttribute(AnnotationKey key, String value) {
-        addAnnotation(new Annotation(key.getCode(), value));
+        addAnnotation(new Annotation(key.getCode(), key.getName(), value));
     }
 
     public void recordAttribute(AnnotationKey key, int value) {
-        addAnnotation(new Annotation(key.getCode(), value));
+        addAnnotation(new Annotation(key.getCode(), key.getName(), String.valueOf(value)));
     }
 
     public void recordAttribute(AnnotationKey key, Object value) {
-        addAnnotation(new Annotation(key.getCode(), value));
+        addAnnotation(new Annotation(key.getCode(), key.getName(), value.toString()));
     }
 
     abstract void addAnnotation(Annotation annotation);

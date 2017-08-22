@@ -18,6 +18,7 @@ package com.navercorp.pinpoint.profiler.context.id;
 
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
 import com.navercorp.pinpoint.common.util.Assert;
+import com.navercorp.pinpoint.profiler.context.transform.EndPoint;
 
 /**
  * @author Woonduk Kang(emeroad)
@@ -28,16 +29,35 @@ public class DefaultTraceRoot implements TraceRoot {
     private final String agentId;
     private final long localTransactionId;
 
+    private final String serviceName;
+
     private final long traceStartTime;
 
     private final Shared shared = new DefaultShared();
 
+    private EndPoint endPoint;
+
+    public EndPoint getEndPoint() {
+        return endPoint;
+    }
+
+    public void setEndPoint(EndPoint endPoint) {
+        this.endPoint = endPoint;
+    }
 
     public DefaultTraceRoot(TraceId traceId, String agentId, long traceStartTime, long localTransactionId) {
         this.traceId = Assert.requireNonNull(traceId, "traceId must not be null");
         this.agentId = Assert.requireNonNull(agentId, "agentId must not be null");
         this.traceStartTime = traceStartTime;
         this.localTransactionId = localTransactionId;
+
+        /* chuanyun */
+        this.serviceName = System.getProperty("applicationName", "default");
+    }
+
+    @Override
+    public String getServiceName() {
+        return this.serviceName;
     }
 
     @Override
