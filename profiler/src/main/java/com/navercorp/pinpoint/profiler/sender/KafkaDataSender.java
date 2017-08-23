@@ -1,7 +1,9 @@
 package com.navercorp.pinpoint.profiler.sender;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navercorp.pinpoint.bootstrap.config.ProfilerConfig;
 import com.navercorp.pinpoint.profiler.context.Span;
+import com.navercorp.pinpoint.profiler.context.transform.SSpan;
 import com.navercorp.pinpoint.rpc.Future;
 import com.navercorp.pinpoint.rpc.FutureListener;
 import com.navercorp.pinpoint.rpc.ResponseMessage;
@@ -22,6 +24,7 @@ import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -143,7 +146,15 @@ public class KafkaDataSender extends AbstractDataSender implements EnhancedDataS
 //                    return;
 //                }
 //                doSend(copy);
-                ProducerRecord<String, String> producerRecord = new ProducerRecord(this.topic, (String)message);
+                // change
+                // pack message to json
+                List<SSpan> sSpanList = ((Span) message).getsSpans();
+                ObjectMapper objectMapper = new ObjectMapper();
+                String json = objectMapper.writeValueAsString(sSpanList);
+                logger.debug("span info, json encode {}", json);
+
+                //todo connect to kafka.
+                ProducerRecord<String, String> producerRecord = new ProducerRecord<String, String>(this.topic, json);
                 kafkaProducer.send(producerRecord);
             } else if (message instanceof RequestMarker) {
 //                RequestMarker requestMarker = (RequestMarker) message;

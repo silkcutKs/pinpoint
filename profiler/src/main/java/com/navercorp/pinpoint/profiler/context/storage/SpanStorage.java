@@ -19,6 +19,7 @@ package com.navercorp.pinpoint.profiler.context.storage;
 import com.navercorp.pinpoint.profiler.context.Span;
 import com.navercorp.pinpoint.profiler.context.SpanEvent;
 import com.navercorp.pinpoint.profiler.context.id.TraceRoot;
+import com.navercorp.pinpoint.profiler.context.transform.SAnnotation;
 import com.navercorp.pinpoint.profiler.context.transform.SSpan;
 import com.navercorp.pinpoint.profiler.sender.DataSender;
 
@@ -48,27 +49,19 @@ public class SpanStorage implements Storage {
     }
 
     /* chuanyun change thrift to json, the format is zipkin */
-    private void transformt2J(Span span) {
-//        String endPoint = span.getEndPoint();
-//        String traceId = this.traceRoot.getTraceId().getTransactionId();
-//        List<SSpan> sspans = new ArrayList<SSpan>();
-
-        /* change parent span to root span */
-
-        /* span id is parent span id , next id is span id */
-        /* change spanEvent to child span */
-        /* add SAnnotations as ba */
-    }
-
+    /* change parent span to root span */
+    /* span id is parent span id , next id is span id */
+    /* change spanEvent to child span */
+    /* add SAnnotations as ba */
     // transform span event to sspan
     private  void transformE2S(SpanEvent spanEvent){
         String traceId = this.traceRoot.getTraceId().getTransactionId();
-        String parentId = String.valueOf(spanEvent.getSpanId());
-        String spanId = String.valueOf(spanEvent.getNextSpanId());
+        String parentId = Long.toHexString(spanEvent.getsParentId());
+        String spanId = Long.toHexString(spanEvent.getsSpanId());
         String name = spanEvent.getServiceType().getName();
-        SSpan sSpan = new SSpan(traceId, parentId, spanId, name, spanEvent.getStartElapsed() * 1000, 1000 * (spanEvent.getEndElapsed() - spanEvent.getStartElapsed()));
+        SSpan sSpan = new SSpan(traceId, parentId, spanId, name, spanEvent.getStartTime() * 1000, 1000 * (spanEvent.getAfterTime() - spanEvent.getStartTime()));
         sSpan.setBinaryAnnotations(spanEvent.getBinaryAnnotations());
-        sSpan.setSAnnotations(spanEvent.getsAnnotations());
+        sSpan.SAnnotations(spanEvent.getsAnnotations());
         this.sSpans.add(sSpan);
     }
 
@@ -92,6 +85,22 @@ public class SpanStorage implements Storage {
         if (span == null) {
             throw new NullPointerException("span must not be null");
         }
+
+        // set span as root span
+        String traceId = span.getTraceRoot().getTraceId().getTransactionId();
+        String spanId = Long.toHexString(span.getSpanId());
+        String parentId = Long.toHexString(span.getParentSpanId());
+        String name = span.getApplicationName();
+        SSpan sSpan = new SSpan(traceId, parentId, spanId, name, span.getStartTime() * 1000, 1000 * (span.getAfterTime() - span.getStartTime()));
+        List<SAnnotation> sAnnotations = new ArrayList<SAnnotation>(2);
+        SAnnotation annotation1 = new SAnnotation("sr", span.getStartTime() * 1000, span.getTraceRoot().getEndPoint());
+        SAnnotation annotation2 = new SAnnotation("ss", span.getAfterTime() * 1000, span.getTraceRoot().getEndPoint());
+        sAnnotations.add(annotation1);
+        sAnnotations.add(annotation2);
+        sSpan.SAnnotations(sAnnotations);
+
+        this.sSpans.add(sSpan);
+
         span.setsSpans(this.sSpans);
         this.dataSender.send(span);
     }

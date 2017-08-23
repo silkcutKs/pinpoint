@@ -1,27 +1,37 @@
 package com.navercorp.pinpoint.profiler.context.transform;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by silkcutKs on 2017/8/22 chuanyun.
  */
+@JsonPropertyOrder({"traceId", "name", "id", "parentId", "timestamp",  "duration", "version", "annotations", "binaryAnnotations"})
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class SSpan {
-    public String TraceId;
+
+    public String traceId;
     public String parentId;
     public String id;  //spanid
     public String name;
     public long timestamp; // nano time
     public long duration; // execute time
+
+
     public List<SAnnotation> SAnnotations = new ArrayList<SAnnotation>();
     public List<BinaryAnnotation> binaryAnnotations = new ArrayList<BinaryAnnotation>();
 
     public String getTraceId() {
-        return TraceId;
+        return traceId;
     }
 
     public void setTraceId(String traceId) {
-        TraceId = traceId;
+        this.traceId = traceId;
     }
 
     public String getParentId() {
@@ -64,11 +74,13 @@ public class SSpan {
         this.duration = duration;
     }
 
-    public List<SAnnotation> getSAnnotations() {
+    @JsonGetter("annotations")
+    public List<SAnnotation> SAnnotations() {
         return SAnnotations;
     }
 
-    public void setSAnnotations(List<SAnnotation> SAnnotations) {
+    @JsonSetter("annotations")
+    public void SAnnotations(List<SAnnotation> SAnnotations) {
         this.SAnnotations = SAnnotations;
     }
 
@@ -81,7 +93,7 @@ public class SSpan {
     }
 
     public SSpan(String traceId, String parentId, String id, String name, long timestamp, long duration) {
-        TraceId = traceId;
+        this.traceId = traceId;
         this.parentId = parentId;
         this.id = id;
         this.name = name;
@@ -90,7 +102,7 @@ public class SSpan {
     }
 
     public SSpan(String traceId, String parentId, String id, String name) {
-        TraceId = traceId;
+        this.traceId = traceId;
         this.parentId = parentId;
         this.id = id;
         this.name = name;

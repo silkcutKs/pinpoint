@@ -8,11 +8,11 @@ public class BinaryAnnotation {
 
     public String value;
 
-    public EndPoint endPoint;
+    public EndPoint endpoint;
 
     public BinaryAnnotation(String key, String value, EndPoint endPoint) {
         this.key = key;
         this.value = value;
-        this.endPoint = endPoint;
+        this.endpoint = endPoint;
     }
 }

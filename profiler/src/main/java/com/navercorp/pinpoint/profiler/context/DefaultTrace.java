@@ -19,16 +19,15 @@ package com.navercorp.pinpoint.profiler.context;
 import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.context.scope.TraceScope;
 import com.navercorp.pinpoint.common.util.Assert;
+import com.navercorp.pinpoint.exception.PinpointException;
 import com.navercorp.pinpoint.profiler.context.active.ActiveTraceHandle;
 import com.navercorp.pinpoint.profiler.context.id.TraceRoot;
 import com.navercorp.pinpoint.profiler.context.id.TraceRootSupport;
 import com.navercorp.pinpoint.profiler.context.recorder.WrappedSpanEventRecorder;
 import com.navercorp.pinpoint.profiler.context.scope.DefaultTraceScopePool;
+import com.navercorp.pinpoint.profiler.context.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.navercorp.pinpoint.exception.PinpointException;
-import com.navercorp.pinpoint.profiler.context.storage.Storage;
 
 /**
  * @author netspider
@@ -72,9 +71,23 @@ public final class DefaultTrace implements Trace, TraceRootSupport {
         this.wrappedSpanEventRecorder = Assert.requireNonNull(wrappedSpanEventRecorder, "wrappedSpanEventRecorder must not be null");
         this.activeTraceHandle = Assert.requireNonNull(activeTraceHandle, "activeTraceHandle must not be null");
 
+        //chuanyun
+        this.pushRootSpanToStack();
         setCurrentThread();
     }
 
+    //chuanyun
+    private void pushRootSpanToStack(){
+        if (!isClosed()) {
+            // Set properties for the case when stackFrame is not used as part of Span.
+            // chuanyun modify
+            // get parent spanId
+            final SpanEvent spanEvent = newSpanEvent(-2);
+            spanEvent.setsSpanId(this.span.getSpanId());
+            spanEvent.setsParentId(this.span.getParentSpanId());
+            this.callStack.push(spanEvent);
+        }
+    }
 
     @Override
     public TraceRoot getTraceRoot() {
@@ -97,14 +110,31 @@ public final class DefaultTrace implements Trace, TraceRootSupport {
             final SpanEvent dummy = newSpanEvent(stackId);
             return wrappedSpanEventRecorder(this.wrappedSpanEventRecorder, dummy);
         }
-        // Set properties for the case when stackFrame is not used as part of SSpan.
+        // Set properties for the case when stackFrame is not used as part of Span.
+        // chuanyun modify
+        // get parent spanId
         final SpanEvent spanEvent = newSpanEvent(stackId);
         this.callStack.push(spanEvent);
         return wrappedSpanEventRecorder(this.wrappedSpanEventRecorder, spanEvent);
     }
 
     private SpanEvent newSpanEvent(int stackId) {
+
         final SpanEvent spanEvent = new SpanEvent(getTraceRoot());
+
+        long parentSpanId = 0;
+        // chuanyun set span Id and parentSpanId
+        if (!this.callStack.empty()) {
+            SpanEvent parentSpan = this.callStack.peek();
+            parentSpanId = parentSpan.getsSpanId();
+        } else {
+            parentSpanId = 0;
+        }
+
+        long spanId = SpanId.newSpanId();
+        spanEvent.setsSpanId(spanId);
+        spanEvent.setsParentId(parentSpanId);
+
         spanEvent.markStartTime();
         spanEvent.setStackId(stackId);
         return spanEvent;
@@ -166,7 +196,9 @@ public final class DefaultTrace implements Trace, TraceRootSupport {
         closed = true;
 
         final long afterTime = System.currentTimeMillis();
-        if (!callStack.empty()) {
+
+        /* chuanyun here will add root span,  one root span will leave  */
+        if (this.callStack.getIndex() > 1) {
             if (isWarn) {
                 stackDump("not empty call stack.");
             }

@@ -43,9 +43,11 @@ public final class TransactionIdUtils {
         }
         StringBuilder sb = new StringBuilder(64);
         sb.append(agentId);
-        sb.append(TRANSACTION_ID_DELIMITER);
+
+        //chuanyun
+//        sb.append(TRANSACTION_ID_DELIMITER);
         sb.append(agentStartTime);
-        sb.append(TRANSACTION_ID_DELIMITER);
+//        sb.append(TRANSACTION_ID_DELIMITER);
         sb.append(transactionSequence);
         return sb.toString();
     }

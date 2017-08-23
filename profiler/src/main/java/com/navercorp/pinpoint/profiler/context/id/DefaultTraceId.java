@@ -34,7 +34,10 @@ public class DefaultTraceId implements TraceId {
     private final short flags;
 
     public DefaultTraceId(String agentId, long agentStartTime, long transactionId) {
-        this(agentId, agentStartTime, transactionId, SpanId.NULL, SpanId.newSpanId(), (short) 0);
+        //chuanyun change parentSpanId to random
+//        this(agentId, agentStartTime, transactionId, SpanId.NULL, SpanId.newSpanId(), (short) 0);
+        this(agentId, agentStartTime, transactionId, SpanId.newSpanId(), SpanId.newSpanId(), (short) 0);
+
     }
 
     public TraceId getNextTraceId() {

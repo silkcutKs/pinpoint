@@ -43,6 +43,9 @@ public class SpanEvent extends TSpanEvent implements FrameAttachment {
     private long startTime;
     private long afterTime;
 
+    private long sSpanId;
+    private long sParentId;
+
     private ServiceType serviceType;
     private List<SAnnotation> sAnnotations = new ArrayList<SAnnotation>(2);
     private List<BinaryAnnotation> binaryAnnotations = new ArrayList<BinaryAnnotation>(5);
@@ -52,8 +55,24 @@ public class SpanEvent extends TSpanEvent implements FrameAttachment {
             throw new NullPointerException("traceRoot must not be null");
         }
         this.traceRoot = traceRoot;
+
+        //chuanyuna generate spanId
+    }
+    public long getsSpanId() {
+        return sSpanId;
     }
 
+    public void setsSpanId(long sSpanId) {
+        this.sSpanId = sSpanId;
+    }
+
+    public long getsParentId() {
+        return sParentId;
+    }
+
+    public void setsParentId(long sParentId) {
+        this.sParentId = sParentId;
+    }
     public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
     }

@@ -52,7 +52,7 @@ public class DefaultTraceRoot implements TraceRoot {
         this.localTransactionId = localTransactionId;
 
         /* chuanyun */
-        this.serviceName = System.getProperty("applicationName", "default");
+        this.serviceName = System.getProperty("pinpoint.applicationName", "default");
     }
 
     @Override
