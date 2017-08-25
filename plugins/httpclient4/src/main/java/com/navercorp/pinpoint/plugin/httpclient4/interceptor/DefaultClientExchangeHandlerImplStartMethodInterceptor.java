@@ -16,31 +16,10 @@
 
 package com.navercorp.pinpoint.plugin.httpclient4.interceptor;
 
-import java.io.IOException;
-
 import com.navercorp.pinpoint.bootstrap.async.AsyncContextAccessor;
-import com.navercorp.pinpoint.bootstrap.context.AsyncContext;
-import com.navercorp.pinpoint.common.Charsets;
-import com.navercorp.pinpoint.common.util.StringUtils;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpMessage;
-import org.apache.http.HttpRequest;
-import org.apache.http.NameValuePair;
-import org.apache.http.ParseException;
-import org.apache.http.concurrent.BasicFuture;
-import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
-import org.apache.http.protocol.HTTP;
-
 import com.navercorp.pinpoint.bootstrap.config.DumpType;
+import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.context.Header;
-import com.navercorp.pinpoint.bootstrap.context.MethodDescriptor;
-import com.navercorp.pinpoint.bootstrap.context.SpanEventRecorder;
-import com.navercorp.pinpoint.bootstrap.context.Trace;
-import com.navercorp.pinpoint.bootstrap.context.TraceContext;
-import com.navercorp.pinpoint.bootstrap.context.TraceId;
 import com.navercorp.pinpoint.bootstrap.interceptor.AroundInterceptor;
 import com.navercorp.pinpoint.bootstrap.logging.PLogger;
 import com.navercorp.pinpoint.bootstrap.logging.PLoggerFactory;
@@ -50,11 +29,19 @@ import com.navercorp.pinpoint.bootstrap.util.FixedByteArrayOutputStream;
 import com.navercorp.pinpoint.bootstrap.util.InterceptorUtils;
 import com.navercorp.pinpoint.bootstrap.util.SimpleSampler;
 import com.navercorp.pinpoint.bootstrap.util.SimpleSamplerFactory;
+import com.navercorp.pinpoint.common.Charsets;
 import com.navercorp.pinpoint.common.trace.AnnotationKey;
+import com.navercorp.pinpoint.common.util.StringUtils;
 import com.navercorp.pinpoint.plugin.httpclient4.HttpClient4Constants;
 import com.navercorp.pinpoint.plugin.httpclient4.HttpClient4PluginConfig;
 import com.navercorp.pinpoint.plugin.httpclient4.RequestProducerGetter;
 import com.navercorp.pinpoint.plugin.httpclient4.ResultFutureGetter;
+import org.apache.http.*;
+import org.apache.http.concurrent.BasicFuture;
+import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
+import org.apache.http.protocol.HTTP;
+
+import java.io.IOException;
 
 /**
  * 
@@ -131,9 +118,12 @@ public class DefaultClientExchangeHandlerImplStartMethodInterceptor implements A
 
         if (httpRequest != null) {
             httpRequest.setHeader(Header.HTTP_TRACE_ID.toString(), nextId.getTransactionId());
-            httpRequest.setHeader(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
 
-            httpRequest.setHeader(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+            //chuanyun
+//            httpRequest.setHeader(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
+//            httpRequest.setHeader(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+            httpRequest.setHeader(Header.HTTP_SPAN_ID.toString(), Long.toHexString(nextId.getSpanId()));
+            httpRequest.setHeader(Header.HTTP_PARENT_SPAN_ID.toString(), Long.toHexString(nextId.getParentSpanId()));
 
             httpRequest.setHeader(Header.HTTP_FLAGS.toString(), String.valueOf(nextId.getFlags()));
             httpRequest.setHeader(Header.HTTP_PARENT_APPLICATION_NAME.toString(), traceContext.getApplicationName());

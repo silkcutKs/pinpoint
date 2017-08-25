@@ -25,7 +25,7 @@ import com.navercorp.pinpoint.profiler.context.transform.EndPoint;
  */
 public class DefaultTraceRoot implements TraceRoot {
 
-    private final TraceId traceId;
+    private TraceId traceId;
     private final String agentId;
     private final long localTransactionId;
 
@@ -52,7 +52,7 @@ public class DefaultTraceRoot implements TraceRoot {
         this.localTransactionId = localTransactionId;
 
         /* chuanyun */
-        this.serviceName = System.getProperty("pinpoint.applicationName", "default");
+        this.serviceName = System.getProperty("pinpoint.applicationName", "default-java");
     }
 
     @Override
@@ -63,6 +63,12 @@ public class DefaultTraceRoot implements TraceRoot {
     @Override
     public TraceId getTraceId() {
         return traceId;
+    }
+
+    @Override
+    public void setTraceId(TraceId traceId)
+    {
+        this.traceId = traceId;
     }
 
     @Override

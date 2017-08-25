@@ -60,6 +60,16 @@ public class DefaultAsyncTraceId implements AsyncTraceId, TraceRootSupport {
         return getTraceId0().getNextTraceId();
     }
 
+    /* chuanyuan */
+    @Override
+    public void setParentSpanId(long parentSpanId) {
+        getTraceId0().setParentSpanId(parentSpanId);
+    }
+
+    @Override
+    public void setSpanId(long spanId) {
+        getTraceId0().setSpanId(spanId);
+    }
 
     @Override
     public long getSpanId() {

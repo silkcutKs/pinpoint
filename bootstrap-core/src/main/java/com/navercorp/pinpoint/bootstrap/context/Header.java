@@ -28,14 +28,27 @@ import java.util.Map;
  */
 public enum Header {
 
-    HTTP_TRACE_ID("Pinpoint-TraceID"),
-    HTTP_SPAN_ID("Pinpoint-SpanID"),
-    HTTP_PARENT_SPAN_ID("Pinpoint-pSpanID"),
-    HTTP_SAMPLED("Pinpoint-Sampled"),
-    HTTP_FLAGS("Pinpoint-Flags"),
-    HTTP_PARENT_APPLICATION_NAME("Pinpoint-pAppName"),
-    HTTP_PARENT_APPLICATION_TYPE("Pinpoint-pAppType"),
-    HTTP_HOST("Pinpoint-Host");
+    JAVA_VERSION("java-1"),
+
+    HTTP_PREFIX("X-W-"),
+    /* chuanyun */
+    HTTP_TRACE_ID(HTTP_PREFIX + "TraceId"),
+    HTTP_SPAN_ID(HTTP_PREFIX + "SpanId"),
+    HTTP_PARENT_SPAN_ID(HTTP_PREFIX + "ParentSpanId"),
+    HTTP_SAMPLED(HTTP_PREFIX + "Sampled"),
+    HTTP_FLAGS(HTTP_PREFIX + "Flags"),
+    HTTP_PARENT_APPLICATION_NAME(HTTP_PREFIX + "pAppName"),
+    HTTP_PARENT_APPLICATION_TYPE(HTTP_PREFIX + "pAppType"),
+    HTTP_HOST(HTTP_PREFIX + "Host");
+
+//    HTTP_TRACE_ID("Pinpoint-TraceID"),
+//    HTTP_SPAN_ID("Pinpoint-SpanID"),
+//    HTTP_PARENT_SPAN_ID("Pinpoint-pSpanID"),
+//    HTTP_SAMPLED("Pinpoint-Sampled"),
+//    HTTP_FLAGS("Pinpoint-Flags"),
+//    HTTP_PARENT_APPLICATION_NAME("Pinpoint-pAppName"),
+//    HTTP_PARENT_APPLICATION_TYPE("Pinpoint-pAppType"),
+//    HTTP_HOST("Pinpoint-Host");
 
     private String name;
 

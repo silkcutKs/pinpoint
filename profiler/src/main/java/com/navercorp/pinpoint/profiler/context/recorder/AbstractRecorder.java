@@ -138,7 +138,7 @@ public abstract class AbstractRecorder {
     }
 
     public void recordAttribute(AnnotationKey key, Object value) {
-        addAnnotation(new Annotation(key.getCode(), key.getName(), value.toString()));
+        addAnnotation(new Annotation(key.getCode(), key.getName(), value.toString().substring(0, 256)));
     }
 
     abstract void addAnnotation(Annotation annotation);

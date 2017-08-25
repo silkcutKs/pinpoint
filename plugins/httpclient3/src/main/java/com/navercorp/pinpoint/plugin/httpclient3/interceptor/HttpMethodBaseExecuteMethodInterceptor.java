@@ -16,30 +16,9 @@
 
 package com.navercorp.pinpoint.plugin.httpclient3.interceptor;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.navercorp.pinpoint.common.plugin.util.HostAndPort;
-import com.navercorp.pinpoint.common.util.StringUtils;
-import com.navercorp.pinpoint.plugin.httpclient3.CommandContextFormatter;
-import org.apache.commons.httpclient.HttpConnection;
-import org.apache.commons.httpclient.HttpConstants;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
-import org.apache.commons.httpclient.protocol.Protocol;
-
 import com.navercorp.pinpoint.bootstrap.config.DumpType;
 import com.navercorp.pinpoint.bootstrap.context.Header;
-import com.navercorp.pinpoint.bootstrap.context.MethodDescriptor;
-import com.navercorp.pinpoint.bootstrap.context.SpanEventRecorder;
-import com.navercorp.pinpoint.bootstrap.context.Trace;
-import com.navercorp.pinpoint.bootstrap.context.TraceContext;
-import com.navercorp.pinpoint.bootstrap.context.TraceId;
+import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.interceptor.AroundInterceptor;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScopeInvocation;
@@ -50,11 +29,16 @@ import com.navercorp.pinpoint.bootstrap.util.FixedByteArrayOutputStream;
 import com.navercorp.pinpoint.bootstrap.util.InterceptorUtils;
 import com.navercorp.pinpoint.bootstrap.util.SimpleSampler;
 import com.navercorp.pinpoint.bootstrap.util.SimpleSamplerFactory;
+import com.navercorp.pinpoint.common.plugin.util.HostAndPort;
 import com.navercorp.pinpoint.common.trace.AnnotationKey;
-import com.navercorp.pinpoint.plugin.httpclient3.HttpClient3CallContext;
-import com.navercorp.pinpoint.plugin.httpclient3.HttpClient3CallContextFactory;
-import com.navercorp.pinpoint.plugin.httpclient3.HttpClient3Constants;
-import com.navercorp.pinpoint.plugin.httpclient3.HttpClient3PluginConfig;
+import com.navercorp.pinpoint.common.util.StringUtils;
+import com.navercorp.pinpoint.plugin.httpclient3.*;
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
+import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.apache.commons.httpclient.methods.StringRequestEntity;
+import org.apache.commons.httpclient.protocol.Protocol;
 
 /**
  * @author Minwoo Jung
@@ -196,8 +180,13 @@ public class HttpMethodBaseExecuteMethodInterceptor implements AroundInterceptor
         if (target instanceof HttpMethod) {
             final HttpMethod httpMethod = (HttpMethod) target;
             httpMethod.setRequestHeader(Header.HTTP_TRACE_ID.toString(), nextId.getTransactionId());
-            httpMethod.setRequestHeader(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
-            httpMethod.setRequestHeader(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+
+            //chuanyun
+//            httpMethod.setRequestHeader(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
+//            httpMethod.setRequestHeader(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+
+            httpMethod.setRequestHeader(Header.HTTP_SPAN_ID.toString(), Long.toHexString(nextId.getSpanId()));
+            httpMethod.setRequestHeader(Header.HTTP_PARENT_SPAN_ID.toString(),  Long.toHexString(nextId.getParentSpanId()));
             httpMethod.setRequestHeader(Header.HTTP_FLAGS.toString(), String.valueOf(nextId.getFlags()));
             httpMethod.setRequestHeader(Header.HTTP_PARENT_APPLICATION_NAME.toString(), traceContext.getApplicationName());
             httpMethod.setRequestHeader(Header.HTTP_PARENT_APPLICATION_TYPE.toString(), Short.toString(traceContext.getServerTypeCode()));

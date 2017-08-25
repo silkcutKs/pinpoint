@@ -25,7 +25,7 @@ public final class NumberUtils {
             return defaultLong;
         }
         try {
-            return Long.parseLong(str);
+            return Long.parseLong(str, 16);
         } catch (NumberFormatException e) {
             return defaultLong;
         }

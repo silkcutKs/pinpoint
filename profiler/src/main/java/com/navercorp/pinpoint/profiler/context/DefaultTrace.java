@@ -115,6 +115,12 @@ public final class DefaultTrace implements Trace, TraceRootSupport {
         // get parent spanId
         final SpanEvent spanEvent = newSpanEvent(stackId);
         this.callStack.push(spanEvent);
+
+        // change root trace span id and parent span id
+        // when call other server, the call always get TraceRoot  traceId and parentId
+        this.getTraceRoot().getTraceId().setSpanId(spanEvent.getsSpanId());
+        this.getTraceRoot().getTraceId().setParentSpanId(spanEvent.getsParentId());
+
         return wrappedSpanEventRecorder(this.wrappedSpanEventRecorder, spanEvent);
     }
 

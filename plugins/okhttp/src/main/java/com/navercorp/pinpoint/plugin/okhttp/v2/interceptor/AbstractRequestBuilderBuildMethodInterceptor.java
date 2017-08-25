@@ -85,8 +85,13 @@ public abstract class AbstractRequestBuilderBuildMethodInterceptor implements Ar
 
             final TraceId nextId = (TraceId) attachment;
             builder.header(Header.HTTP_TRACE_ID.toString(), nextId.getTransactionId());
-            builder.header(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
-            builder.header(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+
+            //chuanyun
+//            builder.header(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
+//            builder.header(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+            builder.header(Header.HTTP_SPAN_ID.toString(), Long.toHexString(nextId.getSpanId()));
+            builder.header(Header.HTTP_PARENT_SPAN_ID.toString(), Long.toHexString(nextId.getParentSpanId()));
+
             builder.header(Header.HTTP_FLAGS.toString(), String.valueOf(nextId.getFlags()));
             builder.header(Header.HTTP_PARENT_APPLICATION_NAME.toString(), traceContext.getApplicationName());
             builder.header(Header.HTTP_PARENT_APPLICATION_TYPE.toString(), Short.toString(traceContext.getServerTypeCode()));

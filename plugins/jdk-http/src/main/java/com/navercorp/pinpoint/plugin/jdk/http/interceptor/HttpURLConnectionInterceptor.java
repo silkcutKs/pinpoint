@@ -16,15 +16,7 @@
 
 package com.navercorp.pinpoint.plugin.jdk.http.interceptor;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import com.navercorp.pinpoint.bootstrap.context.Header;
-import com.navercorp.pinpoint.bootstrap.context.MethodDescriptor;
-import com.navercorp.pinpoint.bootstrap.context.SpanEventRecorder;
-import com.navercorp.pinpoint.bootstrap.context.Trace;
-import com.navercorp.pinpoint.bootstrap.context.TraceContext;
-import com.navercorp.pinpoint.bootstrap.context.TraceId;
+import com.navercorp.pinpoint.bootstrap.context.*;
 import com.navercorp.pinpoint.bootstrap.interceptor.AroundInterceptor;
 import com.navercorp.pinpoint.bootstrap.interceptor.scope.InterceptorScope;
 import com.navercorp.pinpoint.bootstrap.logging.PLogger;
@@ -36,6 +28,9 @@ import com.navercorp.pinpoint.plugin.jdk.http.ConnectedGetter;
 import com.navercorp.pinpoint.plugin.jdk.http.ConnectingGetter;
 import com.navercorp.pinpoint.plugin.jdk.http.JdkHttpConstants;
 import com.navercorp.pinpoint.plugin.jdk.http.JdkHttpPluginConfig;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 /**
  * @author netspider
@@ -104,8 +99,12 @@ public class HttpURLConnectionInterceptor implements AroundInterceptor {
         String endpoint = getEndpoint(host, port);
 
         request.setRequestProperty(Header.HTTP_TRACE_ID.toString(), nextId.getTransactionId());
-        request.setRequestProperty(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
-        request.setRequestProperty(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+
+        //chuanyun
+//        request.setRequestProperty(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
+//        request.setRequestProperty(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+        request.setRequestProperty(Header.HTTP_SPAN_ID.toString(), Long.toHexString(nextId.getSpanId()));
+        request.setRequestProperty(Header.HTTP_PARENT_SPAN_ID.toString(), Long.toHexString(nextId.getParentSpanId()));
 
         request.setRequestProperty(Header.HTTP_FLAGS.toString(), String.valueOf(nextId.getFlags()));
         request.setRequestProperty(Header.HTTP_PARENT_APPLICATION_NAME.toString(), traceContext.getApplicationName());

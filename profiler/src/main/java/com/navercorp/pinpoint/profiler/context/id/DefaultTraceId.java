@@ -29,8 +29,8 @@ public class DefaultTraceId implements TraceId {
     private final long agentStartTime;
     private final long transactionSequence;
 
-    private final long parentSpanId;
-    private final long spanId;
+    private long parentSpanId;
+    private long spanId;
     private final short flags;
 
     public DefaultTraceId(String agentId, long agentStartTime, long transactionId) {
@@ -41,7 +41,8 @@ public class DefaultTraceId implements TraceId {
     }
 
     public TraceId getNextTraceId() {
-        return new DefaultTraceId(this.agentId, this.agentStartTime, transactionSequence, spanId, SpanId.nextSpanID(spanId, parentSpanId), flags);
+//        return new DefaultTraceId(this.agentId, this.agentStartTime, transactionSequence, spanId, SpanId.nextSpanID(spanId, parentSpanId), flags);
+        return new DefaultTraceId(this.agentId, this.agentStartTime, transactionSequence, parentSpanId, spanId, flags);
     }
 
     public DefaultTraceId(String agentId, long agentStartTime, long transactionId, long parentSpanId, long spanId, short flags) {
@@ -59,6 +60,14 @@ public class DefaultTraceId implements TraceId {
 
     public String getTransactionId() {
         return TransactionIdUtils.formatString(agentId, agentStartTime, transactionSequence);
+    }
+
+    public void setParentSpanId(long parentSpanId) {
+        this.parentSpanId = parentSpanId;
+    }
+
+    public void setSpanId(long spanId) {
+        this.spanId = spanId;
     }
 
     public String getAgentId() {

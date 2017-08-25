@@ -94,8 +94,13 @@ public class HttpClientStreamInterceptor implements AroundInterceptor {
             recorder.recordNextSpanId(nextId.getSpanId());
 
             headers.add(Header.HTTP_TRACE_ID.toString(), nextId.getTransactionId());
-            headers.add(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
-            headers.add(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+
+            //chuanyun
+//            headers.add(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
+//            headers.add(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+            headers.add(Header.HTTP_SPAN_ID.toString(), Long.toHexString(nextId.getSpanId()));
+            headers.add(Header.HTTP_PARENT_SPAN_ID.toString(), Long.toHexString(nextId.getParentSpanId()));
+
             headers.add(Header.HTTP_FLAGS.toString(), String.valueOf(nextId.getFlags()));
             headers.add(Header.HTTP_PARENT_APPLICATION_NAME.toString(), traceContext.getApplicationName());
             headers.add(Header.HTTP_PARENT_APPLICATION_TYPE.toString(), Short.toString(traceContext.getServerTypeCode()));

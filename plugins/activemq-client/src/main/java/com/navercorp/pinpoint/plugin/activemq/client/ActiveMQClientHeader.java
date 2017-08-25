@@ -25,13 +25,15 @@ import javax.jms.Message;
  * @author HyunGil Jeong
  */
 public enum ActiveMQClientHeader {
-    ACTIVEMQ_TRACE_ID("Pinpoint-TraceID"),
-    ACTIVEMQ_SPAN_ID("Pinpoint-SpanID"),
-    ACTIVEMQ_PARENT_SPAN_ID("Pinpoint-pSpanID"),
-    ACTIVEMQ_SAMPLED("Pinpoint-Sampled"),
-    ACTIVEMQ_FLAGS("Pinpoint-Flags"),
-    ACTIVEMQ_PARENT_APPLICATION_NAME("Pinpoint-pAppName"),
-    ACTIVEMQ_PARENT_APPLICATION_TYPE("Pinpoint-pAppType");
+    ACTIVE_MQ_PREFIX("X-W-"),
+
+    ACTIVEMQ_TRACE_ID(ACTIVE_MQ_PREFIX + "TraceId"),
+    ACTIVEMQ_SPAN_ID(ACTIVE_MQ_PREFIX + "SpanId"),
+    ACTIVEMQ_PARENT_SPAN_ID(ACTIVE_MQ_PREFIX + "ParentSpanId"),
+    ACTIVEMQ_SAMPLED(ACTIVE_MQ_PREFIX + "Sampled"),
+    ACTIVEMQ_FLAGS(ACTIVE_MQ_PREFIX + "Flags"),
+    ACTIVEMQ_PARENT_APPLICATION_NAME(ACTIVE_MQ_PREFIX + "pAppName"),
+    ACTIVEMQ_PARENT_APPLICATION_TYPE(ACTIVE_MQ_PREFIX + "pAppType");
 
     private final String id;
 

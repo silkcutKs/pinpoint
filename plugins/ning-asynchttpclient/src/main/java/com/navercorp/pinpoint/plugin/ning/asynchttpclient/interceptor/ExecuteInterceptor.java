@@ -110,8 +110,13 @@ public class ExecuteInterceptor implements AroundInterceptor {
         if (httpRequest != null) {
             final HttpHeaders httpRequestHeaders = httpRequest.getHeaders();
             httpRequestHeaders.add(Header.HTTP_TRACE_ID.toString(), nextId.getTransactionId());
-            httpRequestHeaders.add(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
-            httpRequestHeaders.add(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+
+            //chuanyun
+//            httpRequestHeaders.add(Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
+//            httpRequestHeaders.add(Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+            httpRequestHeaders.add(Header.HTTP_SPAN_ID.toString(), Long.toHexString(nextId.getSpanId()));
+            httpRequestHeaders.add(Header.HTTP_PARENT_SPAN_ID.toString(), Long.toHexString(nextId.getParentSpanId()));
+
             httpRequestHeaders.add(Header.HTTP_FLAGS.toString(), String.valueOf(nextId.getFlags()));
             httpRequestHeaders.add(Header.HTTP_PARENT_APPLICATION_NAME.toString(), traceContext.getApplicationName());
             httpRequestHeaders.add(Header.HTTP_PARENT_APPLICATION_TYPE.toString(), Short.toString(traceContext.getServerTypeCode()));

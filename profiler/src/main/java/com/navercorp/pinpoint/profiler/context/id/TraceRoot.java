@@ -26,6 +26,8 @@ public interface TraceRoot {
 
     TraceId getTraceId();
 
+    void setTraceId(TraceId traceId);
+
     long getLocalTransactionId();
 
     long getTraceStartTime();

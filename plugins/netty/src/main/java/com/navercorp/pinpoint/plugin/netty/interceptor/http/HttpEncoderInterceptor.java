@@ -136,9 +136,13 @@ public class HttpEncoderInterceptor implements AroundInterceptor {
         HttpHeaders headers = httpMessage.headers();
 
         addHeaderIfNotExist(headers, Header.HTTP_TRACE_ID.toString(), nextId.getTransactionId());
-        addHeaderIfNotExist(headers, Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
 
-        addHeaderIfNotExist(headers, Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+        //chuanyun
+//        addHeaderIfNotExist(headers, Header.HTTP_SPAN_ID.toString(), String.valueOf(nextId.getSpanId()));
+//        addHeaderIfNotExist(headers, Header.HTTP_PARENT_SPAN_ID.toString(), String.valueOf(nextId.getParentSpanId()));
+        addHeaderIfNotExist(headers, Header.HTTP_SPAN_ID.toString(), Long.toHexString(nextId.getSpanId()));
+        addHeaderIfNotExist(headers, Header.HTTP_PARENT_SPAN_ID.toString(), Long.toHexString(nextId.getParentSpanId()));
+
 
         addHeaderIfNotExist(headers, Header.HTTP_FLAGS.toString(), String.valueOf(nextId.getFlags()));
         addHeaderIfNotExist(headers, Header.HTTP_PARENT_APPLICATION_NAME.toString(), traceContext.getApplicationName());

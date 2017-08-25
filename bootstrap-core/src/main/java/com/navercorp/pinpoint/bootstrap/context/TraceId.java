@@ -25,6 +25,10 @@ public interface TraceId {
 
     long getSpanId();
 
+    void setSpanId(long spanId);
+
+    void setParentSpanId(long parentSpanId);
+
     String getTransactionId();
 
     String getAgentId();

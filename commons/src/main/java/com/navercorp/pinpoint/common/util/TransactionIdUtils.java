@@ -49,7 +49,7 @@ public final class TransactionIdUtils {
         sb.append(agentStartTime);
 //        sb.append(TRANSACTION_ID_DELIMITER);
         sb.append(transactionSequence);
-        return sb.toString();
+        return Long.toHexString(Long.valueOf(sb.toString()));
     }
 
     public static byte[] formatBytes(String agentId, long agentStartTime, long transactionSequence) {

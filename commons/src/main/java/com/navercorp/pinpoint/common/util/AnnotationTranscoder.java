@@ -21,7 +21,6 @@ import com.navercorp.pinpoint.common.buffer.AutomaticBuffer;
 import com.navercorp.pinpoint.common.buffer.Buffer;
 import com.navercorp.pinpoint.common.buffer.FixedBuffer;
 import com.navercorp.pinpoint.thrift.dto.TAnnotation;
-import com.navercorp.pinpoint.thrift.dto.TAnnotationValue;
 import com.navercorp.pinpoint.thrift.dto.TIntStringStringValue;
 import com.navercorp.pinpoint.thrift.dto.TIntStringValue;
 
@@ -53,11 +52,11 @@ public class AnnotationTranscoder {
 
 
     public Object getMappingValue(TAnnotation annotation) {
-        final TAnnotationValue value = annotation.getValue();
+        final String value = annotation.getValue();
         if (value == null) {
             return null;
         }
-        return value.getFieldValue();
+        return value;
     }
 
 

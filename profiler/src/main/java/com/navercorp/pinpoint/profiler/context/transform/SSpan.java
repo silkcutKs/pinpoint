@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.navercorp.pinpoint.bootstrap.context.Header;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ public class SSpan {
     public String name;
     public long timestamp; // nano time
     public long duration; // execute time
+    public final String version = Header.JAVA_VERSION.toString();
 
 
     public List<SAnnotation> SAnnotations = new ArrayList<SAnnotation>();

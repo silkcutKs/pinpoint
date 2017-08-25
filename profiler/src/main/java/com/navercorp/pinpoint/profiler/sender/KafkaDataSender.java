@@ -125,6 +125,7 @@ public class KafkaDataSender extends AbstractDataSender implements EnhancedDataS
         // set config
         properties.put("bootstrap.servers", brokers);
         properties.put("request.required.acks", acks);
+        properties.put("compression.type", "gzip");
         properties.put("retries", 1);
         properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
