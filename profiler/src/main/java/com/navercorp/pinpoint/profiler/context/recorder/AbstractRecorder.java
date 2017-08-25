@@ -65,9 +65,11 @@ public abstract class AbstractRecorder {
             return;
         }
         if (methodDescriptor.getApiId() == 0) {
-            recordAttribute(AnnotationKey.API, methodDescriptor.getFullName());
+            recordAttribute(AnnotationKey.METHOD, methodDescriptor.getFullName());
         } else {
-            setApiId0(methodDescriptor.getApiId());
+            //chuanyun record attribute
+            recordAttribute(AnnotationKey.METHOD, methodDescriptor.getFullName());
+//            setApiId0(methodDescriptor.getApiId());
         }
     }
     

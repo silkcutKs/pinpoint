@@ -123,9 +123,11 @@ public interface AnnotationKey {
 //    @Deprecated  // you should remove static API code. Use only API-DID. dump by int
 //    API_ID(11, "API-ID"),
     // Dump api by string.
+    //chuanyun
     AnnotationKey API = AnnotationKeyFactory.of(12, "API");
     AnnotationKey API_METADATA = AnnotationKeyFactory.of(13, "API-METADATA");
     AnnotationKey RETURN_DATA = AnnotationKeyFactory.of(14, "RETURN_DATA", VIEW_IN_RECORD_SET);
+    AnnotationKey METHOD = AnnotationKeyFactory.of(15, "METHOD");
     AnnotationKey API_TAG = AnnotationKeyFactory.of(10015, "API-TAG");
     
     // when you don't know the correct cause of errors.
@@ -155,7 +157,9 @@ public interface AnnotationKey {
     AnnotationKey HTTP_PARAM = AnnotationKeyFactory.of(41, "http.param", VIEW_IN_RECORD_SET);
     AnnotationKey HTTP_PARAM_ENTITY = AnnotationKeyFactory.of(42, "http.entity", VIEW_IN_RECORD_SET);
     AnnotationKey HTTP_COOKIE = AnnotationKeyFactory.of(45, "http.cookie", VIEW_IN_RECORD_SET);
-    AnnotationKey HTTP_STATUS_CODE = AnnotationKeyFactory.of(46, "http.status.code", VIEW_IN_RECORD_SET);
+    //chuanyun
+//    AnnotationKey HTTP_STATUS_CODE = AnnotationKeyFactory.of(46, "http.status.code", VIEW_IN_RECORD_SET);
+    AnnotationKey HTTP_STATUS_CODE = AnnotationKeyFactory.of(46, "http.status_code", VIEW_IN_RECORD_SET);
     AnnotationKey HTTP_INTERNAL_DISPLAY = AnnotationKeyFactory.of(48, "http.internal.display");
     AnnotationKey HTTP_IO = AnnotationKeyFactory.of(49, "http.io", VIEW_IN_RECORD_SET);
     // post method parameter of httpclient

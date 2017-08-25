@@ -151,8 +151,9 @@ public class TAnnotation implements org.apache.thrift.TBase<TAnnotation, TAnnota
     __isset_bitfield = org.apache.thrift.EncodingUtils.setBit(__isset_bitfield, __KEY_ISSET_ID, value);
   }
 
-  public TAnnotationValue getValue() {
-    return this.value;
+  public String getValue() {
+//    return this.value;
+    return "";
   }
 
   public void setValue(TAnnotationValue value) {

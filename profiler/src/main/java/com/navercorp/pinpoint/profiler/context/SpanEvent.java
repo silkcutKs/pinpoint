@@ -18,11 +18,10 @@ package com.navercorp.pinpoint.profiler.context;
 
 import com.navercorp.pinpoint.bootstrap.context.FrameAttachment;
 import com.navercorp.pinpoint.common.trace.ServiceType;
-import com.navercorp.pinpoint.common.util.StringUtils;
 import com.navercorp.pinpoint.profiler.context.id.TraceRoot;
 import com.navercorp.pinpoint.profiler.context.transform.BinaryAnnotation;
+import com.navercorp.pinpoint.profiler.context.transform.EndPoint;
 import com.navercorp.pinpoint.profiler.context.transform.SAnnotation;
-import com.navercorp.pinpoint.thrift.dto.TIntStringValue;
 import com.navercorp.pinpoint.thrift.dto.TSpanEvent;
 
 import java.util.ArrayList;
@@ -42,11 +41,12 @@ public class SpanEvent extends TSpanEvent implements FrameAttachment {
     private Object frameObject;
     private long startTime;
     private long afterTime;
+    private String endPoint = null;
 
     private long sSpanId;
     private long sParentId;
 
-    private ServiceType serviceType;
+    private ServiceType serviceType = null;
     private List<SAnnotation> sAnnotations = new ArrayList<SAnnotation>(2);
     private List<BinaryAnnotation> binaryAnnotations = new ArrayList<BinaryAnnotation>(5);
 
@@ -73,8 +73,38 @@ public class SpanEvent extends TSpanEvent implements FrameAttachment {
     public void setsParentId(long sParentId) {
         this.sParentId = sParentId;
     }
+
+    public EndPoint parseEndPoint() {
+        String[] after = this.endPoint.split(":");
+        String ip;
+        int port = 0;
+        if (after.length >= 2) {
+            ip = after[0];
+            port = Integer.parseInt(after[1]);
+        } else {
+            ip = after[0];
+        }
+        return new EndPoint(this.serviceType.getName().toLowerCase(), ip, port);
+    }
+
+    private void checkAndSetSa() {
+        if (this.endPoint != null && this.serviceType != null) {
+            EndPoint endPoint = this.parseEndPoint();
+            BinaryAnnotation binaryAnnotation = new BinaryAnnotation("sa", "true", endPoint);
+            this.binaryAnnotations.add(binaryAnnotation);
+        }
+    }
+
+    /* here endpoint is always host:port, we can parse it */
+    public void setEndPoint(String endPoint) {
+        this.endPoint = endPoint;
+        this.checkAndSetSa();
+    }
+
+    /* if service type and endPoint is all ok, we check set sa */
     public void setServiceType(ServiceType serviceType) {
         this.serviceType = serviceType;
+        this.checkAndSetSa();
     }
 
     public ServiceType getServiceType(){ return this.serviceType;}
@@ -86,10 +116,11 @@ public class SpanEvent extends TSpanEvent implements FrameAttachment {
     }
 
     public void addAnnotation(Annotation annotation) {
-        BinaryAnnotation binaryAnnotation = new BinaryAnnotation(annotation.getDesc(), annotation.getValue().toString(), traceRoot.getEndPoint());
+        BinaryAnnotation binaryAnnotation = new BinaryAnnotation(annotation.getDesc(), annotation.getValue(), traceRoot.getEndPoint());
         binaryAnnotations.add(binaryAnnotation);
     }
 
+    // exception error record as error
     public void setExceptionInfo(boolean markError, int exceptionClassId, String exceptionMessage) {
         setExceptionInfo(exceptionClassId, exceptionMessage);
         if (markError) {
@@ -98,11 +129,13 @@ public class SpanEvent extends TSpanEvent implements FrameAttachment {
     }
 
     void setExceptionInfo(int exceptionClassId, String exceptionMessage) {
-        final TIntStringValue exceptionInfo = new TIntStringValue(exceptionClassId);
-        if (StringUtils.hasLength(exceptionMessage)) {
-            exceptionInfo.setStringValue(exceptionMessage);
-        }
-        super.setExceptionInfo(exceptionInfo);
+        BinaryAnnotation binaryAnnotation = new BinaryAnnotation("error", exceptionMessage,  traceRoot.getEndPoint());
+        this.binaryAnnotations.add(binaryAnnotation);
+//        final TIntStringValue exceptionInfo = new TIntStringValue(exceptionClassId);
+//        if (StringUtils.hasLength(exceptionMessage)) {
+//            exceptionInfo.setStringValue(exceptionMessage);
+//        }
+//        super.setExceptionInfo(exceptionInfo);
     }
 
 
@@ -111,6 +144,8 @@ public class SpanEvent extends TSpanEvent implements FrameAttachment {
         SAnnotation sAnnotation = new SAnnotation("cs", this.startTime * 1000, traceRoot.getEndPoint());
         sAnnotations.add(sAnnotation);
     }
+
+
 
     public long getStartTime() {
         return startTime;

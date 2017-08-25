@@ -18,7 +18,6 @@ package com.navercorp.pinpoint.profiler.context;
 
 import com.navercorp.pinpoint.profiler.util.AnnotationValueMapper;
 import com.navercorp.pinpoint.thrift.dto.TAnnotation;
-import com.navercorp.pinpoint.thrift.dto.TAnnotationValue;
 import com.navercorp.pinpoint.thrift.dto.TIntStringStringValue;
 import com.navercorp.pinpoint.thrift.dto.TIntStringValue;
 
@@ -30,9 +29,19 @@ public class Annotation extends TAnnotation {
 
     /* chuanyun */
     private String desc;
+    private String value;
+
 
     public Annotation(int key) {
         super(key);
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 
     public Annotation(int key, Object value) {
@@ -49,43 +58,43 @@ public class Annotation extends TAnnotation {
 
     public Annotation(int key, TIntStringValue value) {
         super(key);
-        this.setValue(TAnnotationValue.intStringValue(value));
+        this.setValue(value.toString());
     }
 
     public Annotation(int key, TIntStringStringValue value) {
         super(key);
-        this.setValue(TAnnotationValue.intStringStringValue(value));
+        this.setValue(value.toString());
     }
 
     /* chuanyun */
     public Annotation(int key, String desc, TIntStringStringValue value) {
         super(key);
         this.desc = desc;
-        this.setValue(TAnnotationValue.intStringStringValue(value));
+        this.setValue(value.toString());
     }
 
     /* chuanyun */
     public Annotation(int key, String desc, String value) {
         super(key);
         this.desc = desc;
-        this.setValue(TAnnotationValue.stringValue(value));
+        this.setValue(value);
     }
 
     public Annotation(int key, String value) {
         super(key);
-        this.setValue(TAnnotationValue.stringValue(value));
+        this.setValue(value);
     }
 
     /* chuanyun */
     public Annotation(int key, String desc, int value) {
         super(key);
         this.desc = desc;
-        this.setValue(TAnnotationValue.intValue(value));
+        this.setValue(String.valueOf(value));
     }
 
     public Annotation(int key, int value) {
         super(key);
-        this.setValue(TAnnotationValue.intValue(value));
+        this.setValue(String.valueOf(value));
     }
     public String getDesc() { return this.desc;}
     public int getAnnotationKey() {

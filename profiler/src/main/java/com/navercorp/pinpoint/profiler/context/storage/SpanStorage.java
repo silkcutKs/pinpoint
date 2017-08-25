@@ -58,7 +58,7 @@ public class SpanStorage implements Storage {
         String traceId = this.traceRoot.getTraceId().getTransactionId();
         String parentId = Long.toHexString(spanEvent.getsParentId());
         String spanId = Long.toHexString(spanEvent.getsSpanId());
-        String name = spanEvent.getServiceType().getName();
+        String name = spanEvent.getServiceType().getName().toLowerCase();
         SSpan sSpan = new SSpan(traceId, parentId, spanId, name, spanEvent.getStartTime() * 1000, 1000 * (spanEvent.getAfterTime() - spanEvent.getStartTime()));
         sSpan.setBinaryAnnotations(spanEvent.getBinaryAnnotations());
         sSpan.SAnnotations(spanEvent.getsAnnotations());
@@ -87,6 +87,7 @@ public class SpanStorage implements Storage {
         }
 
         // set span as root span
+        // chuanyun
         String traceId = span.getTraceRoot().getTraceId().getTransactionId();
         String spanId = Long.toHexString(span.getSpanId());
         String parentId = Long.toHexString(span.getParentSpanId());
@@ -98,6 +99,7 @@ public class SpanStorage implements Storage {
         sAnnotations.add(annotation1);
         sAnnotations.add(annotation2);
         sSpan.SAnnotations(sAnnotations);
+        sSpan.setBinaryAnnotations(span.getBinaryAnnotations());
 
         this.sSpans.add(sSpan);
 

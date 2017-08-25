@@ -19,14 +19,14 @@ package com.navercorp.pinpoint.profiler.context;
 import com.navercorp.pinpoint.bootstrap.context.FrameAttachment;
 import com.navercorp.pinpoint.bootstrap.context.SpanId;
 import com.navercorp.pinpoint.bootstrap.context.TraceId;
-import com.navercorp.pinpoint.common.util.StringUtils;
 import com.navercorp.pinpoint.profiler.context.id.Shared;
 import com.navercorp.pinpoint.profiler.context.id.TraceRoot;
+import com.navercorp.pinpoint.profiler.context.transform.BinaryAnnotation;
 import com.navercorp.pinpoint.profiler.context.transform.EndPoint;
 import com.navercorp.pinpoint.profiler.context.transform.SSpan;
-import com.navercorp.pinpoint.thrift.dto.TIntStringValue;
 import com.navercorp.pinpoint.thrift.dto.TSpan;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,6 +46,8 @@ public class Span extends TSpan implements FrameAttachment {
     private List<SSpan> sSpans;
 
     private SSpan rootSpan;
+
+    private List<BinaryAnnotation> binaryAnnotations = new ArrayList<BinaryAnnotation>(2);
 
     public Span(final TraceRoot traceRoot) {
         if (traceRoot == null) {
@@ -108,12 +110,22 @@ public class Span extends TSpan implements FrameAttachment {
         this.addToAnnotations(annotation);
     }
 
+    public List<BinaryAnnotation> getBinaryAnnotations() {
+        return binaryAnnotations;
+    }
+
+    public void setBinaryAnnotations(List<BinaryAnnotation> binaryAnnotations) {
+        this.binaryAnnotations = binaryAnnotations;
+    }
+
     public void setExceptionInfo(int exceptionClassId, String exceptionMessage) {
-        final TIntStringValue exceptionInfo = new TIntStringValue(exceptionClassId);
-        if (StringUtils.hasLength(exceptionMessage)) {
-            exceptionInfo.setStringValue(exceptionMessage);
-        }
-        super.setExceptionInfo(exceptionInfo);
+        BinaryAnnotation binaryAnnotation = new BinaryAnnotation("error", exceptionMessage,  traceRoot.getEndPoint());
+        this.binaryAnnotations.add(binaryAnnotation);
+//        final TIntStringValue exceptionInfo = new TIntStringValue(exceptionClassId);
+//        if (StringUtils.hasLength(exceptionMessage)) {
+//            exceptionInfo.setStringValue(exceptionMessage);
+//        }
+//        super.setExceptionInfo(exceptionInfo);
     }
 
     public boolean isSetErrCode() {

@@ -1,5 +1,8 @@
 package com.navercorp.pinpoint.profiler.sender;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.navercorp.pinpoint.bootstrap.config.ProfilerConfig;
 import com.navercorp.pinpoint.profiler.context.Span;
@@ -16,6 +19,7 @@ import com.navercorp.pinpoint.thrift.io.HeaderTBaseDeserializerFactory;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.thrift.TBase;
+import org.apache.zookeeper.ZooKeeper;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
@@ -24,6 +28,8 @@ import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -39,6 +45,8 @@ public class KafkaDataSender extends AbstractDataSender implements EnhancedDataS
     private ProfilerConfig profilerConfig;
 
     private KafkaProducer kafkaProducer = null;
+
+    private Properties properties;
 
     private String topic;
 
@@ -62,25 +70,71 @@ public class KafkaDataSender extends AbstractDataSender implements EnhancedDataS
         this(client, null);
     }
 
+    private String parseBrokerJson(String broker) throws JsonParseException, JsonMappingException, IOException {
+        String host = null;
+        String port = null;
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode rootNode = mapper.readTree(broker.getBytes());
+        Iterator<String> keys = rootNode.fieldNames();
+        while(keys.hasNext()) {
+            String fieldName = keys.next();
+            if (fieldName.equals("host")) {
+                host = rootNode.path(fieldName).asText();
+            }
+
+            if (fieldName.equals("port")) {
+                port = String.valueOf(rootNode.path(fieldName).asInt());
+            }
+        }
+        if (host != null && port != null) {
+            return host + ":" + port;
+        } else {
+            return null;
+        }
+    }
+
     public KafkaDataSender(PinpointClient client, ProfilerConfig profilerConfig) {
         this.client = client;
         this.profilerConfig = profilerConfig;
 
-        // read profiler config
-        Properties props = new Properties();
-        String brokerList = this.profilerConfig.readString("profiler.kafkadatasender.brokerlist", "localhost:9092");
-        String acks = this.profilerConfig.readString("profiler.kafkadatasender.required.acks", "1");
+        // read kafka from zookeeper
+        properties = new Properties();
+        String zkServer = this.profilerConfig.readString("profiler.kafkadatasender.zkServer", "localhost:2181");
+        StringBuilder brokerServer = new StringBuilder();
+        try {
+            ZooKeeper zk = new ZooKeeper(zkServer, 10000, null);
+            List<String> ids  = zk.getChildren("/brokers/ids", false);
+            for (String id: ids ) {
+                String broker = new String(zk.getData("/brokers/ids" + "/" + id, false, null));
+                String nb = this.parseBrokerJson(broker);
+                if (nb != null) {
+                    brokerServer.append(nb).append(",");
+                }
+            }
+            zk.close();
+        }catch (Exception e) {
+            logger.error("get zk config {}", e.getMessage(), e);
+        }
 
-        props.put("metadata.broker.list", brokerList);
-        props.put("request.required.acks", acks);
+        String brokers = brokerServer.deleteCharAt(brokerServer.length()-1).toString();
+        logger.debug("broker server list: {}", brokers);
+
+        String acks = this.profilerConfig.readString("profiler.kafkadatasender.required.acks", "1");
+        this.topic = this.profilerConfig.readString("profiler.kafkadatasender.topic", "cytracing");
+
+        // set config
+        properties.put("bootstrap.servers", brokers);
+        properties.put("request.required.acks", acks);
+        properties.put("retries", 1);
+        properties.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        properties.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
         try {
-            kafkaProducer = new KafkaProducer(props);
+            kafkaProducer = new KafkaProducer(properties);
         } catch (Exception e) {
             logger.warn("kafka producer init error, {}", e.getMessage(), e);
         }
 
-        this.topic = this.profilerConfig.readString("profiler.kafkadatasender.topic", "localhost:9092");
         this.timer = createTimer();
         writeFailFutureListener = new WriteFailFutureListener(logger, "io write fail.", "host", -1);
         this.executor = createAsyncQueueingExecutor(1024 * 5, "Pinpoint-KafkaDataExecutor");
@@ -135,6 +189,8 @@ public class KafkaDataSender extends AbstractDataSender implements EnhancedDataS
         if (!stop.isEmpty()) {
             logger.info("stop Timeout:{}", stop.size());
         }
+
+        this.kafkaProducer.close();
     }
 
     @Override
@@ -177,7 +233,7 @@ public class KafkaDataSender extends AbstractDataSender implements EnhancedDataS
                 return;
             }
         } catch (Exception e) {
-            logger.warn("tcp send fail. Caused:{}", e.getMessage(), e);
+            logger.warn("kafka send fail. Caused:{}", e.getMessage(), e);
         }
     }
 
