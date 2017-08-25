@@ -48,7 +48,9 @@ public final class ClientFactoryUtils {
             }
         }
         LOGGER.warn("change background tcp connect mode remote:{} ", connectAddress);
-        pinpointClient = clientFactory.scheduledConnect(connectAddress);
+
+        //chuanyun delete
+//        pinpointClient = clientFactory.scheduledConnect(connectAddress);
 
         return pinpointClient;
     }
